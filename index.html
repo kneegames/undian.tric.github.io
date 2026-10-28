@@ -48,7 +48,6 @@
             from { transform: translateY(0); }
             to { transform: translateY(-10px); }
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -86,10 +85,16 @@
                 <span class="hidden sm:inline" id="label-sound">Suara: ON</span>
             </button>
 
-            <button onclick="toggleModal('modal-pemenang')" class="bg-slate-800/80 hover:bg-slate-700 text-amber-300 px-3 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 border border-amber-500/30">
+            <button onclick="toggleModal('modal-hadiah')" class="bg-slate-800/80 hover:bg-slate-700 text-amber-300 px-3 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 border border-amber-500/30">
+                <i class="fa-solid fa-boxes-packing text-amber-400"></i>
+                <span class="hidden sm:inline">Daftar Hadiah</span>
+                <span id="prize-badge" class="bg-amber-500 text-slate-950 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+            </button>
+
+            <button onclick="toggleModal('modal-pemenang')" class="bg-slate-800/80 hover:bg-slate-700 text-emerald-300 px-3 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 border border-emerald-500/30">
                 <i class="fa-solid fa-trophy"></i>
                 <span class="hidden sm:inline">Pemenang</span>
-                <span id="winner-badge" class="bg-amber-500 text-slate-950 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                <span id="winner-badge" class="bg-emerald-500 text-slate-950 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
             </button>
 
             <button onclick="toggleModal('modal-pengaturan')" class="bg-slate-800/80 hover:bg-slate-700 text-white px-3 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 border border-slate-600">
@@ -104,13 +109,13 @@
     </header>
 
     <!-- Main Content Display -->
-    <main class="flex-1 flex flex-col items-center justify-center p-4 md:p-6 text-center z-10 my-2 relative">
+    <main class="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 text-center z-10 my-2 relative">
         
         <!-- CENTER OF ATTENTION: COMPANY LOGO & MAIN EVENT TITLE -->
-        <div class="mb-6 flex flex-col items-center justify-center space-y-3 w-full max-w-4xl px-4">
+        <div class="mb-4 sm:mb-6 flex flex-col items-center justify-center space-y-2.5 w-full max-w-4xl px-4">
             <!-- Company Logo Container -->
-            <div id="logo-wrapper" class="p-3 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border-2 border-emerald-400/40 transform hover:scale-105 transition duration-300">
-                <img id="app-logo" src="./logo.png" alt="Company Logo" class="h-14 sm:h-20 md:h-24 max-w-full object-contain mx-auto">
+            <div id="logo-wrapper" class="p-2.5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border-2 border-emerald-400/50 transform hover:scale-105 transition duration-300">
+                <img id="app-logo" src="./logo.png" alt="Company Logo" class="h-12 sm:h-16 md:h-20 max-w-full object-contain mx-auto">
             </div>
 
             <!-- Centered Event Main Title -->
@@ -119,24 +124,56 @@
             </h1>
 
             <!-- Subtitle -->
-            <div id="app-subtitle-wrapper" class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/40 backdrop-blur-md px-5 py-1.5 rounded-full shadow-md">
+            <div id="app-subtitle-wrapper" class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/40 backdrop-blur-md px-4 py-1 rounded-full shadow-md">
                 <i class="fa-solid fa-star text-amber-400 text-xs"></i>
-                <span id="app-subtitle" class="text-sm md:text-lg font-bold text-emerald-200 tracking-wide">
+                <span id="app-subtitle" class="text-xs sm:text-sm md:text-base font-bold text-emerald-200 tracking-wide">
                     DOORPRIZE & UNDIAN KANTOR 2026
                 </span>
                 <i class="fa-solid fa-star text-amber-400 text-xs"></i>
             </div>
         </div>
 
+        <!-- SHOWCASE CARD: ACTIVE PRIZE BEING DRAWN -->
+        <div id="active-prize-card" class="w-full max-w-3xl mx-auto mb-4 bg-slate-900/80 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-amber-400/40 shadow-xl flex flex-wrap items-center justify-between gap-3 text-left">
+            <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-[240px]">
+                <!-- Prize Thumbnail -->
+                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-950 border border-amber-400/50 flex items-center justify-center overflow-hidden shrink-0 shadow-md">
+                    <img id="active-prize-img" src="" alt="Gambar Hadiah" class="w-full h-full object-cover hidden">
+                    <i id="active-prize-icon" class="fa-solid fa-gift text-2xl text-amber-400"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] sm:text-xs uppercase font-extrabold tracking-wider text-amber-400 flex items-center gap-1">
+                        <i class="fa-solid fa-award"></i> HADIAH YANG SEDANG DIUNDI
+                    </span>
+                    <h3 id="active-prize-name" class="font-extrabold text-sm sm:text-lg text-white line-clamp-1">
+                        Pilih / Tambah Hadiah
+                    </h3>
+                    <p id="active-prize-quota" class="text-xs text-slate-300 font-medium">
+                        Sisa Kuota: -
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Selector Dropdown -->
+            <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                <select id="select-active-prize" onchange="changeActivePrize(this.value)" class="bg-slate-950 border border-amber-400/40 rounded-xl px-3 py-2 text-xs font-bold text-amber-300 focus:outline-none w-full sm:w-auto">
+                    <option value="">-- Pilih Hadiah --</option>
+                </select>
+                <button onclick="toggleModal('modal-hadiah')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 p-2 rounded-xl text-xs font-bold transition shrink-0" title="Kelola Hadiah">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
         <!-- MAIN DRAW CARD SECTION -->
-        <div class="w-full max-w-4xl mx-auto my-2">
-            <div id="main-card" class="glass-panel p-6 sm:p-10 md:p-14 rounded-3xl shadow-2xl relative border-2 border-emerald-500/40 overflow-hidden group">
+        <div class="w-full max-w-4xl mx-auto my-1">
+            <div id="main-card" class="glass-panel p-6 sm:p-10 md:p-12 rounded-3xl shadow-2xl relative border-2 border-emerald-500/40 overflow-hidden group">
                 <!-- Background decorative glow -->
                 <div id="glow-1" class="absolute -top-24 -left-24 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
                 <div id="glow-2" class="absolute -bottom-24 -right-24 w-72 h-72 bg-green-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-                <div class="relative z-10 flex flex-col items-center justify-center min-h-[200px] md:min-h-[260px]">
-                    <span id="mode-indicator" class="text-xs font-bold uppercase tracking-widest text-emerald-300 bg-emerald-500/20 px-4 py-1.5 rounded-full mb-4 border border-emerald-400/30">
+                <div class="relative z-10 flex flex-col items-center justify-center min-h-[180px] md:min-h-[220px]">
+                    <span id="mode-indicator" class="text-xs font-bold uppercase tracking-widest text-emerald-300 bg-emerald-500/20 px-4 py-1.5 rounded-full mb-3 border border-emerald-400/30">
                         Mode: Peserta (0 Entri)
                     </span>
 
@@ -146,19 +183,19 @@
                     </div>
 
                     <!-- Additional Details / Subtext -->
-                    <div id="display-sub" class="text-slate-300 text-lg md:text-2xl mt-3 font-bold h-8">
+                    <div id="display-sub" class="text-slate-300 text-base md:text-xl mt-2 font-bold h-7">
                         Tekan tombol Mulai Acak untuk mengundi
                     </div>
                 </div>
             </div>
 
             <!-- Action Controls (START & STOP) -->
-            <div class="mt-8 flex justify-center items-center gap-4 md:gap-6">
-                <button id="btn-start" onclick="startDraw()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-slate-950 font-black text-xl md:text-2xl px-8 sm:px-12 py-4 rounded-2xl shadow-xl shadow-emerald-500/30 transform hover:scale-105 active:scale-95 transition flex items-center gap-3 border-2 border-white/30">
+            <div class="mt-6 sm:mt-8 flex justify-center items-center gap-4 md:gap-6">
+                <button id="btn-start" onclick="startDraw()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-slate-950 font-black text-xl md:text-2xl px-8 sm:px-12 py-3.5 sm:py-4 rounded-2xl shadow-xl shadow-emerald-500/30 transform hover:scale-105 active:scale-95 transition flex items-center gap-3 border-2 border-white/30">
                     <i class="fa-solid fa-play"></i> MULAI ACAK
                 </button>
 
-                <button id="btn-stop" onclick="stopDraw()" disabled class="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-xl md:text-2xl px-8 sm:px-12 py-4 rounded-2xl shadow-xl shadow-red-600/30 transform hover:scale-105 active:scale-95 transition flex items-center gap-3 opacity-50 cursor-not-allowed border-2 border-white/20">
+                <button id="btn-stop" onclick="stopDraw()" disabled class="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-xl md:text-2xl px-8 sm:px-12 py-3.5 sm:py-4 rounded-2xl shadow-xl shadow-red-600/30 transform hover:scale-105 active:scale-95 transition flex items-center gap-3 opacity-50 cursor-not-allowed border-2 border-white/20">
                     <i class="fa-solid fa-stop"></i> BERHENTI!
                 </button>
             </div>
@@ -166,14 +203,79 @@
     </main>
 
     <!-- Footer -->
-    <footer class="w-full p-3 text-center text-xs text-slate-400 glass-panel border-t border-white/10 z-10">
+    <footer class="w-full p-2.5 text-center text-xs text-slate-400 glass-panel border-t border-white/10 z-10">
         Tropical Rainforest International Certification &copy; 2026 | Aplikasi Undian Panggung
     </footer>
 
-    <!-- MODAL 1: PENGATURAN, DATA & 10 TEMA -->
+    <!-- MODAL HADIAH: KELOLA HADIAH & GAMBAR -->
+    <div id="modal-hadiah" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-3xl rounded-2xl max-h-[90vh] flex flex-col border border-white/20 shadow-2xl">
+            <div class="p-5 border-b border-white/10 flex justify-between items-center bg-slate-900/80 rounded-t-2xl">
+                <h3 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-gift"></i> Kelola Daftar Hadiah Undian
+                </h3>
+                <button onclick="toggleModal('modal-hadiah')" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 flex-1 text-left">
+                <!-- Form Tambah Hadiah -->
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-amber-400/30 space-y-3">
+                    <h4 class="font-bold text-amber-300 text-sm uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle"></i> Tambah Hadiah Baru
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs text-slate-300 mb-1">Nama / Deskripsi Hadiah</label>
+                            <input type="text" id="new-prize-name" placeholder="Misal: Smart TV 43 Inch / Sepeda Lipat" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-amber-400 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-300 mb-1">Kuota Total</label>
+                            <input type="number" id="new-prize-quota" min="1" value="1" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-amber-400 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Input Gambar Hadiah -->
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Gambar Hadiah (Upload File atau Masukkan URL)</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="new-prize-img-url" placeholder="https://example.com/hadiah.jpg atau upload" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-amber-400 focus:outline-none">
+                            <label for="prize-img-file" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-lg cursor-pointer flex items-center whitespace-nowrap shrink-0">
+                                <i class="fa-solid fa-upload mr-1"></i> Upload
+                            </label>
+                            <input type="file" id="prize-img-file" accept="image/*" class="hidden" onchange="handlePrizeImgUpload(event)">
+                        </div>
+                    </div>
+
+                    <button onclick="addNewPrize()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-lg transition shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Hadiah
+                    </button>
+                </div>
+
+                <!-- List Hadiah Yang Tersedia -->
+                <div>
+                    <h4 class="font-bold text-slate-200 text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-amber-400"></i> Daftar Hadiah Terdaftar
+                    </h4>
+                    <div id="prize-list-container" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-white/10 flex justify-end bg-slate-900/80 rounded-b-2xl">
+                <button onclick="toggleModal('modal-hadiah')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-5 py-2 rounded-xl text-xs">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PENGATURAN, DATA & TEMA -->
     <div id="modal-pengaturan" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-3xl rounded-2xl max-h-[90vh] flex flex-col border border-white/20 shadow-2xl">
-            <!-- Modal Header -->
             <div class="p-5 border-b border-white/10 flex justify-between items-center bg-slate-900/80 rounded-t-2xl">
                 <h3 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
                     <i class="fa-solid fa-sliders"></i> Pengaturan Acara & Tema
@@ -183,27 +285,24 @@
                 </button>
             </div>
 
-            <!-- Modal Body -->
             <div class="p-6 overflow-y-auto space-y-6 flex-1 text-left">
-                
                 <!-- Section 1: Choice of 10 Themes -->
                 <div class="space-y-3 bg-slate-900/60 p-4 rounded-xl border border-white/10">
                     <h4 class="font-bold text-emerald-400 text-sm uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-palette"></i> 1. Pilihan Tema Tampilan (10 Tema)
                     </h4>
                     <div>
-                        <label class="block text-xs text-slate-300 mb-2 font-semibold">Pilih Tema Acara:</label>
                         <select id="select-theme" onchange="applyThemePreset()" class="w-full bg-slate-950 border border-emerald-500/50 rounded-lg p-3 text-sm text-white focus:border-emerald-400 focus:outline-none font-medium">
                             <option value="emerald-white" selected>🌿 1. Emerald Rainforest (Hijau & Putih - Default Logo TRIC)</option>
                             <option value="light-clean">☀️ 2. Pure White & Emerald (Tema Terang / Light Mode)</option>
                             <option value="gold-gala">👑 3. Gold Gala & Festival (Emas & Amber Mewah)</option>
                             <option value="cyber-neon">⚡ 4. Cyber Neon (Biru Neon & Cyan Modern Tech)</option>
-                            <option value="dark-slate">💎 5. Dark Luxury Slate (Abu-abu Slate Gelap Elegant)</option>
+                            <option value="dark-slate">💎 5. Dark Luxury Slate (Abu-abu Slate Gelap)</option>
                             <option value="midnight-blue">🌌 6. Midnight Blue & Silver (Biru Malam & Perak)</option>
-                            <option value="sunset-crimson">🔥 7. Sunset Crimson (Merah Ruby & Emas Hangat)</option>
+                            <option value="sunset-crimson">🔥 7. Sunset Crimson (Merah Ruby & Emas)</option>
                             <option value="ocean-teal">🌊 8. Oceanic Breeze (Teal & Biru Samudra)</option>
-                            <option value="royal-purple">🔮 9. Royal Purple Prestige (Ungu Kerajaan & Magenta)</option>
-                            <option value="retro-synth">👾 10. Retro Arcade Synthwave (Neon Fuchsia & Pink Retro)</option>
+                            <option value="royal-purple">🔮 9. Royal Purple Prestige (Ungu Kerajaan)</option>
+                            <option value="retro-synth">👾 10. Retro Arcade Synthwave (Neon Pink & Retro)</option>
                         </select>
                     </div>
                 </div>
@@ -211,7 +310,7 @@
                 <!-- Section 2: Logo & Judul Acara -->
                 <div class="space-y-3 bg-slate-900/60 p-4 rounded-xl border border-white/10">
                     <h4 class="font-bold text-emerald-400 text-sm uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-heading"></i> 2. Logo & Judul Acara (Tengah Layar)
+                        <i class="fa-solid fa-heading"></i> 2. Logo & Judul Acara
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -289,7 +388,7 @@
                     </div>
 
                     <p class="text-xs text-slate-400">
-                        Format 1 nama per baris. Opsional divisi: <b>Nama, Divisi</b> (misal: <i>Budi Santoso, Auditing</i>).
+                        Format 1 nama per baris. Opsional divisi: <b>Nama, Divisi</b>.
                     </p>
 
                     <textarea id="textarea-peserta" rows="6" placeholder="Budi Santoso, Auditing&#10;Siti Rahma, HRD&#10;Ahmad Dahlan, Operations" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-white font-mono focus:border-emerald-500 focus:outline-none"></textarea>
@@ -305,7 +404,6 @@
 
             </div>
 
-            <!-- Modal Footer -->
             <div class="p-4 border-t border-white/10 flex justify-end bg-slate-900/80 rounded-b-2xl">
                 <button onclick="saveAndApplySettings()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20">
                     <i class="fa-solid fa-check"></i> Simpan & Terapkan
@@ -314,7 +412,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: DAFTAR PEMENANG -->
+    <!-- MODAL DAFTAR PEMENANG -->
     <div id="modal-pemenang" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-2xl rounded-2xl max-h-[85vh] flex flex-col border border-white/20 shadow-2xl">
             <div class="p-5 border-b border-white/10 flex justify-between items-center bg-slate-900/80 rounded-t-2xl">
@@ -343,27 +441,36 @@
         </div>
     </div>
 
-    <!-- MODAL 3: WINNER ANNOUNCEMENT OVERLAY -->
+    <!-- MODAL WINNER ANNOUNCEMENT OVERLAY -->
     <div id="modal-winner-announcement" class="fixed inset-0 bg-slate-950/90 backdrop-blur-lg hidden z-50 flex flex-col items-center justify-center p-6 text-center">
         <div class="relative w-full max-w-2xl glass-panel p-8 md:p-12 rounded-3xl border-2 border-emerald-400 shadow-2xl flex flex-col items-center">
             
-            <div class="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/50 flex items-center justify-center text-4xl mb-4 animate-bounce-short shadow-lg shadow-emerald-500/30">
+            <!-- Winner Prize Thumbnail Badge -->
+            <div id="announced-prize-box" class="mb-4 bg-amber-500/10 border border-amber-400/40 p-3 rounded-2xl flex items-center gap-3">
+                <img id="announced-prize-img" src="" class="w-12 h-12 object-cover rounded-xl border border-amber-400 hidden">
+                <div class="text-left">
+                    <span class="text-[10px] uppercase font-bold text-amber-400">MEMENANGKAN HADIAH:</span>
+                    <h4 id="announced-prize-title" class="font-extrabold text-white text-sm sm:text-base"></h4>
+                </div>
+            </div>
+
+            <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/50 flex items-center justify-center text-3xl mb-3 animate-bounce-short shadow-lg shadow-emerald-500/30">
                 <i class="fa-solid fa-crown"></i>
             </div>
 
-            <span class="text-emerald-400 text-sm md:text-base font-black uppercase tracking-widest mb-2">
+            <span class="text-emerald-400 text-xs md:text-sm font-black uppercase tracking-widest mb-1">
                 SELAMAT KEPADA PEMENANG!
             </span>
 
-            <div id="announced-winner-name" class="font-title text-4xl sm:text-6xl text-white font-black my-4 glow-emerald break-all">
+            <div id="announced-winner-name" class="font-title text-3xl sm:text-5xl text-white font-black my-3 glow-emerald break-all">
                 NAMA PEMENANG
             </div>
 
-            <div id="announced-winner-sub" class="text-slate-200 text-xl font-bold mb-8">
+            <div id="announced-winner-sub" class="text-slate-200 text-lg font-bold mb-6">
                 -
             </div>
 
-            <button onclick="closeWinnerAnnouncement()" class="bg-gradient-to-r from-emerald-500 to-green-400 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black px-8 py-3.5 rounded-2xl text-lg transition transform hover:scale-105 shadow-xl shadow-emerald-500/30 border border-white/40">
+            <button onclick="closeWinnerAnnouncement()" class="bg-gradient-to-r from-emerald-500 to-green-400 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black px-8 py-3 rounded-2xl text-base transition transform hover:scale-105 shadow-xl shadow-emerald-500/30 border border-white/40">
                 <i class="fa-solid fa-check-circle"></i> LANJUTKAN UNDIAN
             </button>
         </div>
@@ -372,7 +479,7 @@
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         // Global State Variables
-        let mode = 'peserta'; // 'peserta' or 'angka'
+        let mode = 'peserta';
         let participantList = [];
         let numberMin = 1;
         let numberMax = 100;
@@ -380,6 +487,32 @@
         let isShuffling = false;
         let shuffleInterval = null;
         let soundEnabled = true;
+
+        // Prizes Array State
+        let prizeList = [
+            {
+                id: "prize-1",
+                name: "Grand Prize: Smart TV 43 Inch",
+                quota: 1,
+                remaining: 1,
+                image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=300&auto=format&fit=crop&q=80"
+            },
+            {
+                id: "prize-2",
+                name: "Door Prize 1: Sepeda Lipat",
+                quota: 2,
+                remaining: 2,
+                image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=300&auto=format&fit=crop&q=80"
+            },
+            {
+                id: "prize-3",
+                name: "Door Prize 2: Air Fryer Digital",
+                quota: 3,
+                remaining: 3,
+                image: "https://images.unsplash.com/photo-1585515320310-259814833e62?w=300&auto=format&fit=crop&q=80"
+            }
+        ];
+        let activePrizeId = "prize-1";
 
         // Sample Data for TRIC Event
         const sampleData = [
@@ -393,9 +526,8 @@
             { name: "Hendra Wijaya", sub: "Legal Affairs" }
         ];
 
-        // Web Audio API Context & Sound Engine
+        // Web Audio API Context
         let audioCtx = null;
-        let shuffleOscillator = null;
 
         function getAudioContext() {
             if (!audioCtx) {
@@ -420,7 +552,6 @@
             }
         }
 
-        // Fast Tick Sound played during each shuffle interval tick
         function playTickSound() {
             if (!soundEnabled) return;
             try {
@@ -428,7 +559,6 @@
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
 
-                // Randomized high frequency click/tick for slot machine roll effect
                 const freq = 400 + Math.random() * 600;
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(freq, ctx.currentTime);
@@ -444,12 +574,11 @@
             } catch (e) {}
         }
 
-        // Fanfare Sound on Winner Selection
         function playFanfareSound() {
             if (!soundEnabled) return;
             try {
                 const ctx = getAudioContext();
-                const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // C4, E4, G4, C5, E5
+                const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
                 notes.forEach((freq, index) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
@@ -471,11 +600,11 @@
 
         // Initialize on DOM Load
         document.addEventListener('DOMContentLoaded', () => {
-            // Populate initial textarea
             const sampleText = sampleData.map(item => `${item.name}, ${item.sub}`).join('\n');
             document.getElementById('textarea-peserta').value = sampleText;
             parsePesertaFromTextarea();
-            applyThemePreset(); // Default Emerald Rainforest theme
+            applyThemePreset();
+            renderPrizeUI();
         });
 
         // Toggle Modals
@@ -530,6 +659,135 @@
             }
         }
 
+        // --- PRIZE MANAGEMENT LOGIC ---
+        function handlePrizeImgUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('new-prize-img-url').value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function addNewPrize() {
+            const name = document.getElementById('new-prize-name').value.trim();
+            const quota = parseInt(document.getElementById('new-prize-quota').value) || 1;
+            const imgUrl = document.getElementById('new-prize-img-url').value.trim();
+
+            if (!name) {
+                alert('Harap masukkan nama hadiah!');
+                return;
+            }
+
+            const newId = `prize-${Date.now()}`;
+            prizeList.push({
+                id: newId,
+                name: name,
+                quota: quota,
+                remaining: quota,
+                image: imgUrl
+            });
+
+            // Clear form
+            document.getElementById('new-prize-name').value = '';
+            document.getElementById('new-prize-quota').value = '1';
+            document.getElementById('new-prize-img-url').value = '';
+
+            if (!activePrizeId) activePrizeId = newId;
+
+            renderPrizeUI();
+        }
+
+        function deletePrize(id) {
+            if (confirm('Hapus hadiah ini dari daftar?')) {
+                prizeList = prizeList.filter(p => p.id !== id);
+                if (activePrizeId === id) {
+                    activePrizeId = prizeList.length > 0 ? prizeList[0].id : '';
+                }
+                renderPrizeUI();
+            }
+        }
+
+        function changeActivePrize(id) {
+            activePrizeId = id;
+            renderActivePrizeCard();
+        }
+
+        function renderPrizeUI() {
+            document.getElementById('prize-badge').innerText = prizeList.length;
+
+            // Render Select Options in Main Card
+            const selectActive = document.getElementById('select-active-prize');
+            let selectHtml = `<option value="">-- Pilih Hadiah --</option>`;
+            prizeList.forEach(p => {
+                const isSelected = p.id === activePrizeId ? 'selected' : '';
+                selectHtml += `<option value="${p.id}" ${isSelected}>${p.name} (Sisa: ${p.remaining})</option>`;
+            });
+            selectActive.innerHTML = selectHtml;
+
+            // Render Prize List Table in Modal
+            const container = document.getElementById('prize-list-container');
+            if (prizeList.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 text-xs text-center py-4">Belum ada hadiah terdaftar.</p>`;
+            } else {
+                let html = '';
+                prizeList.forEach((p, idx) => {
+                    html += `
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-slate-700">
+                                    ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-gift text-amber-400"></i>`}
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-white text-sm">${p.name}</h5>
+                                    <p class="text-xs text-slate-400">Kuota: <b>${p.remaining}</b> / ${p.quota} Unit</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="changeActivePrize('${p.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg">
+                                    Pilih
+                                </button>
+                                <button onclick="deletePrize('${p.id}')" class="text-red-400 hover:text-red-300 text-xs p-1.5">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            renderActivePrizeCard();
+        }
+
+        function renderActivePrizeCard() {
+            const activePrize = prizeList.find(p => p.id === activePrizeId);
+            const nameEl = document.getElementById('active-prize-name');
+            const quotaEl = document.getElementById('active-prize-quota');
+            const imgEl = document.getElementById('active-prize-img');
+            const iconEl = document.getElementById('active-prize-icon');
+
+            if (activePrize) {
+                nameEl.innerText = activePrize.name;
+                quotaEl.innerText = `Sisa Kuota: ${activePrize.remaining} dari ${activePrize.quota} Unit`;
+                if (activePrize.image) {
+                    imgEl.src = activePrize.image;
+                    imgEl.classList.remove('hidden');
+                    iconEl.classList.add('hidden');
+                } else {
+                    imgEl.classList.add('hidden');
+                    iconEl.classList.remove('hidden');
+                }
+            } else {
+                nameEl.innerText = "Umum / Tanpa Kategori Hadiah";
+                quotaEl.innerText = "Sisa Kuota: -";
+                imgEl.classList.add('hidden');
+                iconEl.classList.remove('hidden');
+            }
+        }
+
         // 10 Theme Switching Logic
         function applyThemePreset() {
             const theme = document.getElementById('select-theme').value;
@@ -538,68 +796,67 @@
             const displayText = document.getElementById('display-text');
             const logoWrapper = document.getElementById('logo-wrapper');
 
-            // Reset default card class
-            mainCard.className = "p-6 sm:p-10 md:p-14 rounded-3xl shadow-2xl relative border-2 overflow-hidden group transition-all duration-500 ";
+            mainCard.className = "p-6 sm:p-10 md:p-12 rounded-3xl shadow-2xl relative border-2 overflow-hidden group transition-all duration-500 ";
 
-            if (theme === 'emerald-white') { // 1. Emerald Rainforest (Dominasi Hijau & Putih)
+            if (theme === 'emerald-white') {
                 bgContainer.className = 'bg-gradient-to-br from-emerald-950 via-slate-950 to-green-950 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-emerald-500/40');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white glow-emerald transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border-2 border-emerald-400/50';
+                logoWrapper.className = 'p-2.5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border-2 border-emerald-400/50';
             }
-            else if (theme === 'light-clean') { // 2. Pure White & Emerald (Light Mode)
+            else if (theme === 'light-clean') {
                 bgContainer.className = 'bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel-light', 'border-emerald-500');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-emerald-700 transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-white rounded-2xl shadow-md border-2 border-emerald-500';
+                logoWrapper.className = 'p-2.5 bg-white rounded-2xl shadow-md border-2 border-emerald-500';
             }
-            else if (theme === 'gold-gala') { // 3. Gold Gala
+            else if (theme === 'gold-gala') {
                 bgContainer.className = 'bg-gradient-to-br from-amber-950 via-slate-950 to-yellow-950 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-amber-500/40');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-amber-300 transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-amber-100/90 rounded-2xl shadow-xl border-2 border-amber-400';
+                logoWrapper.className = 'p-2.5 bg-amber-100/90 rounded-2xl shadow-xl border-2 border-amber-400';
             }
-            else if (theme === 'cyber-neon') { // 4. Cyber Neon
+            else if (theme === 'cyber-neon') {
                 bgContainer.className = 'bg-gradient-to-tr from-indigo-950 via-slate-950 to-cyan-950 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-cyan-400/50');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-cyan-300 transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-white/90 rounded-2xl shadow-xl border-2 border-cyan-400';
+                logoWrapper.className = 'p-2.5 bg-white/90 rounded-2xl shadow-xl border-2 border-cyan-400';
             }
-            else if (theme === 'dark-slate') { // 5. Dark Luxury Slate
+            else if (theme === 'dark-slate') {
                 bgContainer.className = 'bg-slate-950 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-slate-700');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-slate-900 rounded-2xl shadow-xl border border-slate-700';
+                logoWrapper.className = 'p-2.5 bg-slate-900 rounded-2xl shadow-xl border border-slate-700';
             }
-            else if (theme === 'midnight-blue') { // 6. Midnight Blue
+            else if (theme === 'midnight-blue') {
                 bgContainer.className = 'bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-blue-400/40');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-blue-200 transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-white/90 rounded-2xl shadow-xl border-2 border-blue-400';
+                logoWrapper.className = 'p-2.5 bg-white/90 rounded-2xl shadow-xl border-2 border-blue-400';
             }
-            else if (theme === 'sunset-crimson') { // 7. Sunset Crimson
+            else if (theme === 'sunset-crimson') {
                 bgContainer.className = 'bg-gradient-to-br from-rose-950 via-slate-950 to-red-950 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-rose-500/40');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-rose-300 transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-white/90 rounded-2xl shadow-xl border-2 border-rose-400';
+                logoWrapper.className = 'p-2.5 bg-white/90 rounded-2xl shadow-xl border-2 border-rose-400';
             }
-            else if (theme === 'ocean-teal') { // 8. Oceanic Breeze
+            else if (theme === 'ocean-teal') {
                 bgContainer.className = 'bg-gradient-to-tr from-teal-950 via-slate-950 to-emerald-950 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-teal-400/40');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-teal-200 transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-white/90 rounded-2xl shadow-xl border-2 border-teal-400';
+                logoWrapper.className = 'p-2.5 bg-white/90 rounded-2xl shadow-xl border-2 border-teal-400';
             }
-            else if (theme === 'royal-purple') { // 9. Royal Purple Prestige
+            else if (theme === 'royal-purple') {
                 bgContainer.className = 'bg-gradient-to-br from-purple-950 via-slate-950 to-fuchsia-950 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-fuchsia-500/40');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-fuchsia-300 transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-white/90 rounded-2xl shadow-xl border-2 border-fuchsia-400';
+                logoWrapper.className = 'p-2.5 bg-white/90 rounded-2xl shadow-xl border-2 border-fuchsia-400';
             }
-            else if (theme === 'retro-synth') { // 10. Retro Arcade Synthwave
+            else if (theme === 'retro-synth') {
                 bgContainer.className = 'bg-gradient-to-tr from-pink-950 via-purple-950 to-slate-950 text-white min-h-screen flex flex-col justify-between bg-cover bg-center transition-all duration-500 overflow-x-hidden relative';
                 mainCard.classList.add('glass-panel', 'border-pink-500/50');
                 displayText.className = 'font-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-yellow-300 transition-all duration-75 break-all py-2';
-                logoWrapper.className = 'p-3 bg-white/90 rounded-2xl shadow-xl border-2 border-pink-400';
+                logoWrapper.className = 'p-2.5 bg-white/90 rounded-2xl shadow-xl border-2 border-pink-400';
             }
         }
 
@@ -739,7 +996,7 @@
 
             // Start Shuffling Loop & Sound Effects
             shuffleInterval = setInterval(() => {
-                playTickSound(); // Sound effect on every shuffle frame
+                playTickSound();
 
                 if (mode === 'peserta') {
                     const randomIndex = Math.floor(Math.random() * participantList.length);
@@ -752,7 +1009,7 @@
                     displayText.innerText = `# ${formatted}`;
                     displaySub.innerText = `Range (${numberMin} - ${numberMax})`;
                 }
-            }, 60); // Fast tick shuffle interval (60ms)
+            }, 60);
         }
 
         function stopDraw() {
@@ -791,6 +1048,20 @@
                 };
             }
 
+            // Decrement active prize quota if set
+            let activePrizeObj = prizeList.find(p => p.id === activePrizeId);
+            let prizeWonName = "Undian Umur / Doorprize";
+            let prizeWonImg = "";
+
+            if (activePrizeObj) {
+                prizeWonName = activePrizeObj.name;
+                prizeWonImg = activePrizeObj.image || "";
+                if (activePrizeObj.remaining > 0) {
+                    activePrizeObj.remaining -= 1;
+                }
+                renderPrizeUI();
+            }
+
             // Display Winner Result
             document.getElementById('display-text').innerText = winner.name;
             document.getElementById('display-sub').innerText = winner.sub || '---';
@@ -801,6 +1072,7 @@
             winnersList.push({
                 name: winner.name,
                 sub: winner.sub,
+                prize: prizeWonName,
                 time: timeStr,
                 mode: mode === 'peserta' ? 'Peserta' : 'Nomor'
             });
@@ -816,6 +1088,16 @@
             setTimeout(() => {
                 document.getElementById('announced-winner-name').innerText = winner.name;
                 document.getElementById('announced-winner-sub').innerText = winner.sub || '-';
+                document.getElementById('announced-prize-title').innerText = prizeWonName;
+                
+                const popupImg = document.getElementById('announced-prize-img');
+                if (prizeWonImg) {
+                    popupImg.src = prizeWonImg;
+                    popupImg.classList.remove('hidden');
+                } else {
+                    popupImg.classList.add('hidden');
+                }
+
                 toggleModal('modal-winner-announcement');
             }, 600);
         }
@@ -846,7 +1128,8 @@
                             </span>
                             <div>
                                 <h5 class="font-bold text-white text-base">${w.name}</h5>
-                                <p class="text-xs text-slate-400">${w.sub || '-'} • <span class="text-emerald-400">${w.mode}</span></p>
+                                <p class="text-xs text-amber-400 font-semibold"><i class="fa-solid fa-gift text-xs"></i> ${w.prize}</p>
+                                <p class="text-[11px] text-slate-400">${w.sub || '-'} • <span class="text-emerald-400">${w.mode}</span></p>
                             </div>
                         </div>
                         <span class="text-xs text-slate-400 font-mono"><i class="fa-regular fa-clock"></i> ${w.time}</span>
@@ -873,6 +1156,7 @@
             const excelData = winnersList.map((item, i) => ({
                 "No Urut Pemenang": i + 1,
                 "Nama Pemenang / Nomor": item.name,
+                "Hadiah Dimenangkan": item.prize,
                 "Divisi / Keterangan": item.sub,
                 "Waktu Menang": item.time,
                 "Mode Undian": item.mode
